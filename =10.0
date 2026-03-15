@@ -1,0 +1,8 @@
+Requirement already satisfied: pyinstaller in c:\python311\lib\site-packages (6.6.0)
+Requirement already satisfied: pillow in c:\python311\lib\site-packages (9.5.0)
+Requirement already satisfied: setuptools>=42.0.0 in c:\python311\lib\site-packages (from pyinstaller) (65.5.0)
+Requirement already satisfied: altgraph in c:\python311\lib\site-packages (from pyinstaller) (0.17.4)
+Requirement already satisfied: pyinstaller-hooks-contrib>=2024.3 in c:\python311\lib\site-packages (from pyinstaller) (2024.5)
+Requirement already satisfied: packaging>=22.0 in c:\python311\lib\site-packages (from pyinstaller) (23.1)
+Requirement already satisfied: pefile>=2022.5.30 in c:\python311\lib\site-packages (from pyinstaller) (2023.2.7)
+Requirement already satisfied: pywin32-ctypes>=0.2.1 in c:\python311\lib\site-packages (from pyinstaller) (0.2.2)

@@ -1,0 +1,18 @@
+site_name: DirCompare
+site_description: Compare two directories and determine which is more up to date
+repo_url: https://forgejo.darkhorseinfosec.com/username/DirCompare
+
+theme:
+  name: material
+  palette:
+    primary: teal
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - CLI Reference: cli-reference.md
+  - GUI Guide: gui-guide.md
+  - Scoring Algorithm: scoring.md
+  - Plugin API: plugin-api.md
+  - Benchmarks: benchmarks.md
+  - Changelog: changelog.md

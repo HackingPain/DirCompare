@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ruff
+      - run: ruff check DirCompare/
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install .
+      - run: pip install pytest
+      - run: python -m pytest -q --tb=short
+
+  build-check:
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build
+      - run: pip install dist/*.whl
+      - run: dircompare --help
+
+  build-executables:
+    needs: [test, lint]
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact-name: DirCompare-linux-x64
+          - os: windows-latest
+            artifact-name: DirCompare-windows-x64
+          - os: macos-latest
+            artifact-name: DirCompare-macos-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyinstaller pillow
+
+      - name: Install package
+        run: pip install .
+
+      - name: Generate icons
+        run: python scripts/build_icon.py
+
+      - name: Build executables
+        run: python -m PyInstaller DirCompare.spec --clean
+
+      - name: Verify CLI executable (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          chmod +x dist/DirCompare-cli
+          ./dist/DirCompare-cli --help
+
+      - name: Verify CLI executable (Windows)
+        if: runner.os == 'Windows'
+        run: dist\DirCompare-cli.exe --help
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: dist/
+          retention-days: 30
